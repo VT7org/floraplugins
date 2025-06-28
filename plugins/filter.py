@@ -29,7 +29,7 @@ async def save_filters(_, message: Message):
     try:
         if len(message.command) < 2:
             return await message.reply_text(
-                "**𝙐𝙨𝙤:**\nResponda a uma mensagem com /filter [NOME_DO_FILTRO] [CONTEÚDO] para definir um novo filtro."
+                "**Usage:**\nReply to a message with /filter [FILTER_NAME] [CONTENT] to set a new filter."
             )
         replied_message = message.reply_to_message
         if not replied_message:
@@ -37,11 +37,11 @@ async def save_filters(_, message: Message):
         data, name = await get_data_and_name(replied_message, message)
         if len(name) < 2:
             return await message.reply_text(
-                f"𝗣𝗮𝗿𝗮 𝗼 𝗳𝗶𝗹𝘁𝗿𝗼, {name} 𝗱𝗲𝘃𝗲 𝘁𝗲𝗿 𝗺𝗮𝗶𝘀 𝗱𝗲 𝟮 𝗽𝗮𝗹𝗮𝘃𝗿𝗮𝘀."
+                f"For the filter, {name} must have more than 2 words."
             )
         if data == "error":
             return await message.reply_text(
-                "**𝙐𝙨𝙤:**\n__/filter [NOME_DO_FILTRO] [CONTEÚDO]__\n`-----------OU-----------`\nResponda a uma mensagem com. \n/filter [NOME_DO_FILTRO]."
+                "**Usage:**\n__/filter [FILTER_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with. \n/filter [FILTER_NAME]."
             )
         if replied_message.text:
             _type = "text"
@@ -81,7 +81,7 @@ async def save_filters(_, message: Message):
             data = await check_format(ikb, data)
             if not data:
                 return await message.reply_text(
-                    "**𝗙𝗼𝗿𝗺𝗮𝘁𝗮𝗰̧𝗮̃𝗼 𝗲𝗿𝗿𝗮𝗱𝗮, 𝗰𝗼𝗻𝗳𝗶𝗿𝗮 𝗮 𝘀𝗲𝗰̧𝗮̃𝗼 𝗱𝗲 𝗮𝗷𝘂𝗱𝗮.**"
+                    "**Incorrect formatting, check the help section.**"
                 )
         name = name.replace("_", " ")
         _filter = {
@@ -92,10 +92,10 @@ async def save_filters(_, message: Message):
 
         chat_id = message.chat.id
         await save_filter(chat_id, name, _filter)
-        return await message.reply_text(f"__**𝗙𝗶𝗹𝘁𝗿𝗼 {name} salvo com sucesso.**__")
+        return await message.reply_text(f"__**Filter {name} saved successfully.**__")
     except UnboundLocalError:
         return await message.reply_text(
-            "**𝗠𝗲𝗻𝘀𝗮𝗴𝗲𝗺 𝗿𝗲𝘀𝗽𝗼𝗻𝗱𝗶𝗱𝗮 𝗶𝗻𝗮𝗰𝗲𝘀𝘀𝗶́𝘃𝗲𝗹.\nReenviar a mensagem e tente novamente.**"
+            "**Replied message is inaccessible.\nResend the message and try again.**"
         )
 
 
@@ -104,9 +104,9 @@ async def save_filters(_, message: Message):
 async def get_filterss(_, message: Message):
     _filters = await get_filters_names(message.chat.id)
     if not _filters:
-        return await message.reply_text("**𝗡𝗮̃𝗼 𝗵𝗮́ 𝗳𝗶𝗹𝘁𝗿𝗼𝘀 𝗻𝗼 𝗰𝗵𝗮𝘁.**")
+        return await message.reply_text("**No filters in this chat.**")
     _filters.sort()
-    msg = f"𝗟𝗶𝘀𝘁𝗮 𝗱𝗲 𝗳𝗶𝗹𝘁𝗿𝗼𝘀 𝗻𝗼 **{message.chat.title}** :\n"
+    msg = f"List of filters in **{message.chat.title}**:\n"
     for _filter in _filters:
         msg += f"**-** `{_filter}`\n"
     await message.reply_text(msg)
@@ -117,18 +117,18 @@ async def get_filterss(_, message: Message):
 async def stop_all(_, message: Message):
     _filters = await get_filters_names(message.chat.id)
     if not _filters:
-        await message.reply_text("**𝗡𝗮̃𝗼 𝗵𝗮́ 𝗳𝗶𝗹𝘁𝗿𝗼𝘀 𝗻𝗲𝘀𝘁𝗲 𝗰𝗵𝗮𝘁.**")
+        await message.reply_text("**No filters in this chat.**")
     else:
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("𝗦𝗶𝗺, 𝗳𝗮𝘇𝗮 𝗶𝘀𝘀𝗼", callback_data="stop_yes"),
-                    InlineKeyboardButton("𝗡𝗮̃𝗼, 𝗻𝗮̃𝗼 𝗳𝗮𝘇𝗮 𝗶𝘀𝘀𝗼", callback_data="stop_no"),
+                    InlineKeyboardButton("Yes, do it", callback_data="stop_yes"),
+                    InlineKeyboardButton("No, don't do it", callback_data="stop_no"),
                 ]
             ]
         )
         await message.reply_text(
-            "**𝗩𝗼𝗰𝗲̂ 𝘁𝗲𝗺 𝗰𝗲𝗿𝘁𝗲𝘇𝗮 𝗾𝘂𝗲 𝗱𝗲𝘀𝗲𝗷𝗮 𝗱𝗲𝗹𝗲𝘁𝗮𝗿 𝘁𝗼𝗱𝗼𝘀 𝗼𝘀 𝗳𝗶𝗹𝘁𝗿𝗼𝘀 𝗻𝗲𝘀𝘁𝗲 𝗰𝗵𝗮𝘁 𝗽𝗮𝗿𝗮 𝘀𝗲𝗺𝗽𝗿𝗲?**",
+            "**Are you sure you want to delete all filters in this chat permanently?**",
             reply_markup=keyboard,
         )
 
@@ -141,7 +141,7 @@ async def stop_all_cb(_, callback_query: CallbackQuery):
     permission = "can_change_info"
     if permission not in permissions:
         return await callback_query.answer(
-            f"𝗩𝗼𝗰𝗲̂ 𝗻𝗮̃𝗼 𝗽𝗼𝘀𝘀𝘂𝗶 𝗮 𝗽𝗲𝗿𝗺𝗶𝘀𝘀𝗮̃𝗼 𝗻𝗲𝗰𝗲𝘀𝘀𝗮́𝗿𝗶𝗮.\n Permissão: {permission}",
+            f"You do not have the required permission.\nPermission: {permission}",
             show_alert=True,
         )
     input = callback_query.data.split("_", 1)[1]
@@ -149,31 +149,31 @@ async def stop_all_cb(_, callback_query: CallbackQuery):
         stoped_all = await deleteall_filters(chat_id)
         if stoped_all:
             return await callback_query.message.edit(
-                "**𝗧𝗼𝗱𝗼𝘀 𝗼𝘀 𝗳𝗶𝗹𝘁𝗿𝗼𝘀 𝗱𝗲𝗹𝗲𝘁𝗮𝗱𝗼𝘀 𝗰𝗼𝗺 𝘀𝘂𝗰𝗲𝘀𝘀𝗼 𝗻𝗲𝘀𝘁𝗲 𝗰𝗵𝗮𝘁.**"
+                "**All filters deleted successfully in this chat.**"
             )
     if input == "no":
         await callback_query.message.reply_to_message.delete()
         await callback_query.message.delete()
 
 
-__MODULE__ = "🔍 𝗙𝗶𝗹𝘁𝗿𝗼𝘀"
+__MODULE__ = "Filters"
 __HELP__ = """
-**🗃️ Comandos de Filtros:**
+**🗃️ Filter Commands:**
 
-• /filters - **𝗢𝗯𝘁𝗲́𝗺 𝘁𝗼𝗱𝗼𝘀 𝗼𝘀 𝗳𝗶𝗹𝘁𝗿𝗼𝘀 𝗻𝗼 𝗰𝗵𝗮𝘁.**
+• /filters - **Get all filters in the chat.**
 
-• /filter [𝗡𝗢𝗠𝗘_𝗗𝗢_𝗙𝗜𝗟𝗧𝗥𝗢] - **𝗦𝗮𝗹𝘃𝗮 𝘂𝗺 𝗳𝗶𝗹𝘁𝗿𝗼** (responda a uma mensagem).
+• /filter [FILTER_NAME] - **Save a filter** (reply to a message).
 
-📎 **Tipos de Filtros Suportados:**
-Texto, Animação, Foto, Documento, Vídeo, Notas de Vídeo, Áudio, Voz.
+📎 **Supported Filter Types:**
+Text, Animation, Photo, Document, Video, Video Notes, Audio, Voice.
 
-✨ **Dica:** Para usar mais palavras em um filtro, utilize:
-`/filter Oi_tudo_bem` para filtrar "Oi tudo bem".
+✨ **Tip:** To use multiple words in a filter, use:
+`/filter Hi_how_are_you` to filter "Hi how are you".
 
-• /stop [𝗡𝗢𝗠𝗘_𝗗𝗢_𝗙𝗜𝗟𝗧𝗥𝗢] - **𝗣𝗮𝗿𝗮 𝘂𝗺 𝗳𝗶𝗹𝘁𝗿𝗼.**
+• /stop [FILTER_NAME] - **Stop a filter.**
 
-• /stopall - **𝗗𝗲𝗹𝗲𝘁𝗮 𝘁𝗼𝗱𝗼𝘀 𝗼𝘀 𝗳𝗶𝗹𝘁𝗿𝗼𝘀 𝗱𝗲 𝘂𝗺 𝗰𝗵𝗮𝘁 (𝗽𝗲𝗿𝗺𝗮𝗻𝗲𝗻𝘁𝗲𝗺𝗲𝗻𝘁𝗲).**
+• /stopall - **Delete all filters in a chat (permanently).**
 
-📐 **Formato Avançado:**
-Você pode usar markdown ou HTML para salvar o texto também. Consulte /markdownhelp para mais informações sobre formatações e outras sintaxes.
+📐 **Advanced Formatting:**
+You can use markdown or HTML to save text as well. See /markdownhelp for more information on formatting and other syntaxes.
 """
