@@ -48,7 +48,6 @@ async def get_message_sender_name(ctx: Message):
                 if ctx.forward_from.last_name
                 else ctx.forward_from.first_name
             )
-
         elif ctx.forward_from_chat:
             return ctx.forward_from_chat.title
         else:
@@ -74,7 +73,6 @@ async def get_custom_emoji(ctx: Message):
                or not ctx.forward_from
             else ctx.forward_from.emoji_status.custom_emoji_id
         )
-
     return ctx.from_user.emoji_status.custom_emoji_id if ctx.from_user else ""
 
 
@@ -143,7 +141,6 @@ async def get_message_sender_photo(ctx: Message):
                 if ctx.forward_from.photo
                 else ""
             )
-
     elif ctx.from_user and ctx.from_user.photo:
         return {
             "small_file_id": ctx.from_user.photo.small_file_id,
@@ -211,18 +208,13 @@ async def pyrogram_to_quotly(messages, is_reply):
         the_message_dict_to_append["chatId"] = await get_message_sender_id(message)
         the_message_dict_to_append["text"] = await get_text_or_caption(message)
         the_message_dict_to_append["avatar"] = True
-        the_message_dict_to_append["from"] = {}
-        the_message_dict_to_append["from"]["id"] = await get_message_sender_id(message)
-        the_message_dict_to_append["from"]["name"] = await get_message_sender_name(
-            message
-        )
-        the_message_dict_to_append["from"]["username"] = (
-            await get_message_sender_username(message)
-        )
-        the_message_dict_to_append["from"]["type"] = message.chat.type.name.lower()
-        the_message_dict_to_append["from"]["photo"] = await get_message_sender_photo(
-            message
-        )
+        the_message_dict_to_append["from"] = {
+            "id": await get_message_sender_id(message),
+            "name": await get_message_sender_name(message),
+            "username": await get_message_sender_username(message),
+            "type": message.chat.type.name.lower(),
+            "photo": await get_message_sender_photo(message),
+        }
         if message.reply_to_message and is_reply:
             the_message_dict_to_append["replyMessage"] = {
                 "name": await get_message_sender_name(message.reply_to_message),
@@ -240,51 +232,43 @@ async def pyrogram_to_quotly(messages, is_reply):
 
 
 def isArgInt(txt) -> list:
-    count = txt
     try:
-        count = int(count)
-        return [True, count]
+        return [True, int(txt)]
     except ValueError:
         return [False, 0]
 
 
 @app.on_message(filters.command(["q", "r"]) & filters.reply)
 async def msg_quotly_cmd(self: app, ctx: Message):
-    ww = await ctx.reply_text("𝗘𝘀𝗽𝗲𝗿𝗲 𝘂𝗺 𝘀𝗲𝗴𝘂𝗻𝗱𝗼... ⏳")
-    is_reply = False
-    if ctx.command[0].endswith("r"):
-        is_reply = True
+    ww = await ctx.reply_text("Wait a second... ⏳")
+    is_reply = ctx.command[0].endswith("r")
+
     if len(ctx.text.split()) > 1:
         check_arg = isArgInt(ctx.command[1])
         if check_arg[0]:
-            if check_arg[1] < 2 or check_arg[1] > 10:
+            if not (2 <= check_arg[1] <= 10):
                 await ww.delete()
-                return await ctx.reply_msg("𝗔𝗹𝗰𝗮𝗻𝗰𝗲 𝗶𝗻𝘃𝗮́𝗹𝗶𝗱𝗼 ❌", del_in=6)
+                return await ctx.reply_text("Invalid range selected for quote ❌")
             try:
                 messages = [
-                    i
-                    for i in await self.get_messages(
+                    i for i in await self.get_messages(
                         chat_id=ctx.chat.id,
-                        message_ids=range(
-                            ctx.reply_to_message.id,
-                            ctx.reply_to_message.id + (check_arg[1] + 5),
-                        ),
+                        message_ids=range(ctx.reply_to_message.id, ctx.reply_to_message.id + check_arg[1] + 5),
                         replies=-1,
-                    )
-                    if not i.empty and not i.media
+                    ) if not i.empty and not i.media
                 ]
             except Exception:
-                return await ctx.reply_text(
-                    "𝗡𝗮̃𝗼 𝗳𝗼𝗶 𝗽𝗼𝘀𝘀𝗶́𝘃𝗲𝗹 𝗿𝗲𝗰𝗲𝗿 𝗮𝘀 𝗺𝗲𝗻𝘀𝗮𝗴𝗲𝗻𝘀 🤷🏻‍♂️")
+                return await ctx.reply_text("Failed to fetch the messages 🤷🏻‍♂️")
             try:
                 make_quotly = await pyrogram_to_quotly(messages, is_reply=is_reply)
                 bio_sticker = BytesIO(make_quotly)
-                bio_sticker.name = "misskatyquote_sticker.webp"
+                bio_sticker.name = "quote_sticker.webp"
                 await ww.delete()
                 return await ctx.reply_sticker(bio_sticker)
             except Exception:
                 await ww.delete()
-                return await ctx.reply_msg("𝗡𝗮̃𝗼 𝗳𝗼𝗶 𝗽𝗼𝘀𝘀𝗶́𝘃𝗲𝗹 𝗰𝗿𝗶𝗮𝗿 𝗾𝘂𝗼𝘁𝗲 🤷🏻‍♂️")
+                return await ctx.reply_text("Failed to create quote 🤷🏻‍♂️")
+
     try:
         messages_one = await self.get_messages(
             chat_id=ctx.chat.id, message_ids=ctx.reply_to_message.id, replies=-1
@@ -292,31 +276,31 @@ async def msg_quotly_cmd(self: app, ctx: Message):
         messages = [messages_one]
     except Exception:
         await ww.delete()
-        return await ctx.reply_msg("𝗡𝗮̃𝗼 𝗳𝗼𝗶 𝗽𝗼𝘀𝘀𝗶́𝘃𝗲𝗹 𝗿𝗲𝗰𝗲𝗿 𝗮𝘀 𝗺𝗲𝗻𝘀𝗮𝗴𝗲𝗻𝘀 🤷🏻‍♂️")
+        return await ctx.reply_text("Failed to fetch the message 🤷🏻‍♂️")
     try:
         make_quotly = await pyrogram_to_quotly(messages, is_reply=is_reply)
         bio_sticker = BytesIO(make_quotly)
-        bio_sticker.name = "misskatyquote_sticker.webp"
+        bio_sticker.name = "quote_sticker.webp"
         await ww.delete()
         return await ctx.reply_sticker(bio_sticker)
     except Exception as e:
         await ww.delete()
-        return await ctx.reply_text(f"𝗘𝗥𝗥𝗢: {e} ❗")
+        return await ctx.reply_text(f"ERROR: {e} ❗")
 
 
-__MODULE__ = "💬𝗤𝘂𝗼𝘁𝗲"
+__MODULE__ = "💬Quote"
 __HELP__ = """
-**𝗖𝗼𝗺𝗮𝗻𝗱𝗼𝘀 𝗱𝗼 𝗯𝗼𝘁 𝗱𝗲 𝗴𝗲𝗿𝗮𝗰̧𝗮̃𝗼 𝗱𝗲 𝗾𝘂𝗼𝘁𝗲𝘀**
+**Quote Bot Commands**
 
-📝 𝗨𝘀𝗲 𝗲𝘀𝘁𝗲𝘀 𝗰𝗼𝗺𝗮𝗻𝗱𝗼𝘀 𝗽𝗮𝗿𝗮 𝗰𝗿𝗶𝗮𝗿 𝗾𝘂𝗼𝘁𝗲𝘀 𝗮 𝗽𝗮𝗿𝘁𝗶𝗿 𝗱𝗲 𝗺𝗲𝗻𝘀𝗮𝗴𝗲𝗻𝘀:
+📝 Use these commands to create quotes from messages:
 
-- `/q`: 𝗖𝗿𝗶𝗲 𝘂𝗺 𝗾𝘂𝗼𝘁𝗲 𝗮 𝗽𝗮𝗿𝘁𝗶𝗿 𝗱𝗲 𝘂𝗺𝗮 𝗺𝗲𝗻𝘀𝗮𝗴𝗲𝗺 𝘀𝗶𝗺𝗽𝗹𝗲𝘀.
-- `/r`: 𝗖𝗿𝗶𝗲 𝘂𝗺 𝗾𝘂𝗼𝘁𝗲 𝗮 𝗽𝗮𝗿𝘁𝗶𝗿 𝗱𝗲 𝘂𝗺𝗮 𝗺𝗲𝗻𝘀𝗮𝗴𝗲𝗺 𝗲 𝘀𝘂𝗮 𝗿𝗲𝘀𝗽𝗼𝘀𝘁𝗮.
+- `/q`: Create a quote from a single replied message.
+- `/r`: Create a quote from a replied message along with its reply.
 
-**𝗘𝘅𝗲𝗺𝗽𝗹𝗼𝘀:**
-- `/q`: 𝗖𝗿𝗶𝗲 𝘂𝗺 𝗾𝘂𝗼𝘁𝗲 𝗮 𝗽𝗮𝗿𝘁𝗶𝗿 𝗱𝗲 𝗺𝗲𝗻𝘀𝗮𝗴𝗲𝗺𝗲𝗻𝘀 𝗿𝗲𝗽𝗹𝗶𝗰𝗮𝗱𝗮𝘀.
-- `/r`: 𝗖𝗿𝗶𝗲 𝘂𝗺 𝗾𝘂𝗼𝘁𝗲 𝗮 𝗽𝗮𝗿𝘁𝗶𝗿 𝗱𝗲 𝗺𝗲𝗻𝘀𝗮𝗴𝗲𝗺𝗲𝗻𝘀 𝗿𝗲𝗽𝗹𝗶𝗰𝗮𝗱𝗮𝘀.
+**Examples:**
+- `/q`: Create a quote from the replied message.
+- `/r`: Create a quote that includes both the replied message and its response.
 
-**𝗡𝗼𝘁𝗮:**
-𝗖𝗲𝗿𝘁𝗶𝗳𝗶𝗾𝘂𝗲-𝘀𝗲 𝗱𝗲 𝗿𝗲𝗽𝗹𝗶𝗰𝗮𝗿 𝘂𝗺𝗮 𝗺𝗲𝗻𝘀𝗮𝗴𝗲𝗺 𝗽𝗮𝗿𝗮 𝗾𝘂𝗲 𝗼 𝗰𝗼𝗺𝗮𝗻𝗱𝗼 𝗾𝘂𝗼𝘁𝗲 𝗳𝘂𝗻𝗰𝗶𝗼𝗻𝗲.
+**Note:**
+Make sure to reply to a message for the quote command to work properly.
 """
