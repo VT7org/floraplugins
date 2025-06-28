@@ -14,7 +14,7 @@ async def get_joke(_, message: Message):
     response = requests.get(JOKE_API_ENDPOINT)
     r = response.json()
     joke_text = r["jokeContent"]
-    refresh_button = InlineKeyboardButton("🔄 𝗔𝘁𝘂𝗮𝗹𝗶𝘇𝗮𝗿", callback_data=f"refresh_joke")
+    refresh_button = InlineKeyboardButton("🔄 Refresh", callback_data=f"refresh_joke")
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[refresh_button]])
     await message.reply_text(
         f"😂 {joke_text}", reply_markup=keyboard, parse_mode=ParseMode.HTML
@@ -30,7 +30,7 @@ async def refresh_joke(_, query: CallbackQuery):
     await query.message.edit_text(
         f"😂 {new_joke_text}",
         reply_markup=InlineKeyboardMarkup(
-            [[InlineKeyboardButton("🔄 𝗔𝘁𝘂𝗮𝗹𝗶𝘇𝗮𝗿", callback_data=f"refresh_joke")]]
+            [[InlineKeyboardButton("🔄 Refresh", callback_data=f"refresh_joke")]]
         ),
         parse_mode=ParseMode.HTML,
     )
