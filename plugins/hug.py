@@ -1,4 +1,3 @@
-import nekos
 from WinxMusic import app
 from pyrogram import filters
 from pyrogram.types import Message
