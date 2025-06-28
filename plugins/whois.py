@@ -2,27 +2,25 @@ from WinxMusic import app
 from pyrogram import filters
 from pyrogram.errors import PeerIdInvalid
 from pyrogram.types import Message, User
+from datetime import datetime
 
 
 def reply_check(message: Message):
     reply_id = None
-
     if message.reply_to_message:
         reply_id = message.reply_to_message.message_id
-
     elif not message.from_user.is_self:
         reply_id = message.message_id
-
     return reply_id
 
 
 infotext = (
     "[{full_name}](tg://user?id={user_id})\n\n"
-    " ➻ 𝗨𝘀𝗲𝗿 𝗜𝗗: `{user_id}`\n"
-    " ➻ 𝗣𝗿𝗶𝗺𝗲𝗶𝗿𝗼 𝗡𝗼𝗺𝗲: `{first_name}`\n"
-    " ➻ 𝗨́𝗹𝘁𝗶𝗺𝗼 𝗡𝗼𝗺𝗲: `{last_name}`\n"
-    " ➻ 𝗨𝘀𝗲𝗿𝗻𝗮𝗺𝗲: `@{username}`\n"
-    " ➻ 𝗨́𝗹𝘁𝗶𝗺𝗮 𝘃𝗲𝘇 𝗼𝗻𝗹𝗶𝗻𝗲: `{last_online}`"
+    " ➻ User ID: `{user_id}`\n"
+    " ➻ First Name: `{first_name}`\n"
+    " ➻ Last Name: `{last_name}`\n"
+    " ➻ Username: `@{username}`\n"
+    " ➻ Last Seen: `{last_online}`"
 )
 
 
@@ -30,19 +28,17 @@ def last_online(user: User):
     if user.is_bot:
         return ""
     elif user.status == "recently":
-        return "𝗿𝗲𝗰𝗲𝗻𝘁𝗲𝗺𝗲𝗻𝘁𝗲"
+        return "recently"
     elif user.status == "within_week":
-        return "𝗻𝗼 𝘂́𝗹𝘁𝗶𝗺𝗼 𝘀𝗲𝗺𝗮𝗻𝗮"
+        return "within the last week"
     elif user.status == "within_month":
-        return "𝗻𝗼 𝘂́𝗹𝘁𝗶𝗺𝗼 𝗺𝗲̂𝘀"
+        return "within the last month"
     elif user.status == "long_time_ago":
-        return "𝗵𝗮́ 𝗺𝘂𝗶𝘁𝗼 𝘁𝗲𝗺𝗽𝗼 :("
+        return "a long time ago :("
     elif user.status == "online":
-        return "𝗮𝗰𝘁𝘂𝗮𝗹𝗺𝗲𝗻𝘁𝗲 𝗼𝗻𝗹𝗶𝗻𝗲"
+        return "currently online"
     elif user.status == "offline":
-        return datetime.fromtimestamp(user.status.date).strftime(
-            "%a, %d %b %Y, %H:%M:%S"
-        )
+        return datetime.fromtimestamp(user.status.date).strftime("%a, %d %b %Y, %H:%M:%S")
 
 
 def full_name(user: User):
@@ -65,8 +61,9 @@ async def whois(client, message):
     try:
         user = await client.get_users(get_user)
     except PeerIdInvalid:
-        await message.reply("Não conheço este usuário.")
+        await message.reply("I don't know this user.")
         return
+
     desc = await client.get_chat(get_user)
     desc = desc.description
     await message.reply_text(
@@ -78,25 +75,25 @@ async def whois(client, message):
             last_name=user.last_name if user.last_name else "",
             username=user.username if user.username else "",
             last_online=last_online(user),
-            bio=desc if desc else "𝗩𝗮𝘇𝗶𝗼.",
+            bio=desc if desc else "Empty."
         ),
         disable_web_page_preview=True,
     )
 
 
-__MODULE__ = "🆔 𝗜𝗻𝗳𝗼"
+__MODULE__ = "🆔 Info"
 __HELP__ = """
-**Comando:**
+**Command:**
 
-• /whois - **𝗩𝗲𝗿𝗶𝗳𝗶𝗰𝗮𝗿 𝗶𝗻𝗳𝗼𝗿𝗺𝗮𝗰̧𝗮̃𝗼 𝗱𝗼 𝘂𝘀𝘂𝗮́𝗿𝗶𝗼.**
+• /whois - **Check information of a user.**
 
-**𝗜𝗻𝗳𝗼𝗿𝗺𝗮𝗰̧𝗼̃𝗲𝘀:**
+**Information:**
 
-- 𝗘𝘀𝘁𝗲 𝗯𝗼𝘁 𝗽𝗿𝗼𝘃𝗶𝗱𝗲𝗻𝗰𝗶𝗮 𝘂𝗺 𝗰𝗼𝗺𝗮𝗻𝗱𝗼 𝗽𝗮𝗿𝗮 𝘃𝗲𝗿𝗶𝗳𝗶𝗰𝗮𝗿 𝗶𝗻𝗳𝗼𝗿𝗺𝗮𝗰̧𝗮̃𝗼 𝗱𝗲 𝘂𝘀𝘂𝗮́𝗿𝗶𝗼.
-- 𝗨𝘀𝗲 𝗼 𝗰𝗼𝗺𝗮𝗻𝗱𝗼 /whois 𝘀𝗲𝗴𝘂𝗶𝗱𝗼 𝗽𝗼𝗿 𝘂𝗺𝗮 𝗿𝗲𝘀𝗽𝗼𝘀𝘁𝗮 𝗮 𝘂𝗺𝗮 𝗺𝗲𝗻𝘀𝗮𝗴𝗲𝗺 𝗼𝘂 𝗨𝘀𝗲𝗿 𝗜𝗗 𝗽𝗮𝗿𝗮 𝗼𝗯𝘁𝗲𝗿 𝗶𝗻𝗳𝗼𝗿𝗺𝗮𝗰̧𝗮̃𝗼 𝗱𝗼 𝘂𝘀𝘂𝗮́𝗿𝗶𝗼.
+- This bot provides a command to retrieve user information.
+- Use the /whois command by replying to a message or providing a User ID to fetch the user's info.
 
-**𝗡𝗼𝘁𝗮:**
+**Note:**
 
-- 𝗢 𝗰𝗼𝗺𝗮𝗻𝗱𝗼 /whois 𝗽𝗼𝗱𝗲 𝘀𝗲𝗿 𝘂𝘀𝗮𝗱𝗼 𝗽𝗮𝗿𝗮 𝗿𝗲𝘁𝗿𝗶𝗯𝘂𝗶𝗿 𝗶𝗻𝗳𝗼𝗿𝗺𝗮𝗰̧𝗼̃𝗲𝘀 𝘀𝗼𝗯𝗿𝗲 𝗼 𝘂𝘀𝘂𝗮́𝗿𝗶𝗼 𝗻𝗼 𝗰𝗵𝗮𝘁.
-- 𝗔𝘀 𝗶𝗻𝗳𝗼𝗿𝗺𝗮𝗰̧𝗼̃𝗲𝘀 𝗶𝗻𝗰𝗹𝘂𝗶𝗺 𝗜𝗗, 𝗣𝗿𝗶𝗺𝗲𝗶𝗿𝗼 𝗡𝗼𝗺𝗲, 𝗨́𝗹𝘁𝗶𝗺𝗼 𝗡𝗼𝗺𝗲, 𝗨𝘀𝗲𝗿𝗻𝗮𝗺𝗲 𝗲 𝘀𝘁𝗮𝘁𝘂𝘀 𝗼𝗻𝗹𝗶𝗻𝗲.
+- The /whois command can be used to retrieve user details in the chat.
+- The information includes ID, First Name, Last Name, Username, and Online Status.
 """
