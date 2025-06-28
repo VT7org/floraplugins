@@ -81,7 +81,7 @@ async def whois(client, message):
     )
 
 
-__MODULE__ = "🆔 Info"
+__MODULE__ = "Who-Is"
 __HELP__ = """
 **Command:**
 
