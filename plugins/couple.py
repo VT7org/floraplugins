@@ -14,16 +14,14 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from utils import get_image, get_couple, save_couple
 
 
-# get current date in GMT+5:30 timezone
+# Get current date in GMT+5:30 timezone
 def get_today_date():
     timezone = pytz.timezone("Asia/Kolkata")
     now = datetime.now(timezone)
     return now.strftime("%d/%m/%Y")
 
 
-# get tomorrow's date in GMT+5:30 timezone
-
-
+# Get tomorrow's date in GMT+5:30 timezone
 def get_tomorrow_date():
     timezone = pytz.timezone("Asia/Kolkata")
     tomorrow = datetime.now(timezone) + timedelta(days=1)
@@ -31,8 +29,6 @@ def get_tomorrow_date():
 
 
 # Download image from URL
-
-
 def download_image(url, path):
     response = requests.get(url)
     if response.status_code == 200:
@@ -50,7 +46,7 @@ today = get_today_date()
 async def ctest(_, message: Message):
     cid = message.chat.id
     if message.chat.type == ChatType.PRIVATE:
-        return await message.reply_text("⚠️ **Este comando só funciona em grupos.**")
+        return await message.reply_text("⚠️ **This Function only works in groups.**")
 
     p1_path = "downloads/pfp.png"
     p2_path = "downloads/pfp1.png"
@@ -121,11 +117,11 @@ async def ctest(_, message: Message):
             img.save(test_image_path)
 
             TXT = f"""
-**𝗖𝗮𝘀𝗮𝗹 𝗱𝗼 𝗱𝗶𝗮 💘:
+**Couple of the day 💘:**
 
 {N1} + {N2} = 💚
 
-𝗢 𝗽𝗿𝗼́𝘅𝗶𝗺𝗼 𝗰𝗮𝘀𝗮𝗹 𝘀𝗲𝗿𝗮́ 𝘀𝗲𝗹𝗲𝗰𝗶𝗼𝗻𝗮𝗱𝗼 𝗲𝗺 {tomorrow}!**
+The next couple will be selected on {tomorrow}!
             """
 
             await message.reply_photo(
@@ -135,7 +131,7 @@ async def ctest(_, message: Message):
                     [
                         [
                             InlineKeyboardButton(
-                                text="🌋 **Adicione-me**",
+                                text="🌋 **Add me**",
                                 url=f"https://t.me/{app.username}?startgroup=true",
                             )
                         ]
@@ -157,11 +153,11 @@ async def ctest(_, message: Message):
             c2_name = (await app.get_users(c2_id)).first_name
 
             TXT = f"""
-**𝗖𝗮𝘀𝗮𝗹 𝗱𝗼 𝗱𝗶𝗮 🎉:
+**Couples💟 of the day 🎉:**
 
 [{c1_name}](tg://openmessage?user_id={c1_id}) + [{c2_name}](tg://openmessage?user_id={c2_id}) = 💞
 
-𝗢 𝗽𝗿𝗼́𝘅𝗶𝗺𝗼 𝗰𝗮𝘀𝗮𝗹 𝘀𝗲𝗿𝗮́ 𝘀𝗲𝗹𝗲𝗰𝗶𝗼𝗻𝗮𝗱𝗼 𝗲𝗺 {tomorrow}!**
+The next couple will be selected on {tomorrow}!
             """
             await message.reply_photo(
                 b,
@@ -170,7 +166,7 @@ async def ctest(_, message: Message):
                     [
                         [
                             InlineKeyboardButton(
-                                text="🌋 **Adicione-me**",
+                                text="🌋 **Add me**",
                                 url=f"https://t.me/{app.username}?startgroup=true",
                             )
                         ]
