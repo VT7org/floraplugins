@@ -7,7 +7,7 @@ from pyrogram.enums import ChatMembersFilter
 from pyrogram.errors.exceptions.bad_request_400 import UserAlreadyParticipant
 from pyrogram.types import ChatJoinRequest, Message, CallbackQuery
 
-from utils.permissions import admins_only, member_permissions
+from WinxMusic.utils.permissions import admins_only, member_permissions
 
 approvaldb = mongodb.autoapprove
 
