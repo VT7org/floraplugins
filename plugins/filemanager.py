@@ -15,6 +15,17 @@ from utils.error import capture_err
 MAX_MESSAGE_SIZE_LIMIT = 4095
 
 
+def humanbytes(size):
+    """Convert bytes to a human-readable format."""
+    if not size:
+        return "0 B"
+    for unit in ["B", "KB", "MB", "GB", "TB"]:
+        if size < 1024:
+            break
+        size /= 1024
+    return f"{size:.2f} {unit}"
+
+
 @app.on_message(filters.command("ls") & ~filters.forwarded & ~filters.via_bot & SUDOERS)
 @capture_err
 async def lst(_, message: Message):
@@ -29,15 +40,15 @@ async def lst(_, message: Message):
     if not exists(path):
         await eor(
             message,
-            text=f"❌ **𝗡𝗮̃𝗼 𝗲𝘅𝗶𝘀𝘁𝗲 𝗻𝗲𝗻𝗵𝘂𝗺 𝗱𝗶𝗿𝗲𝘁𝗼́𝗿𝗶𝗼 𝗼𝘂 𝗮𝗿𝗾𝘂𝗶𝘃𝗼 𝗰𝗼𝗺 𝗼 𝗻𝗼𝗺𝗲** `{directory}`. 𝗩𝗲𝗿𝗶𝗳𝗶𝗾𝘂𝗲 𝗻𝗼𝘃𝗮𝗺𝗲𝗻𝘁𝗲!",
+            text=f"❌ **No directory or file named** `{directory}`. **Please check again!**",
         )
         return
     if isdir(path):
         if directory:
-            msg = f"📁 **𝗣𝗮𝘀𝘁𝗮𝘀 𝗲 𝗔𝗿𝗾𝘂𝗶𝘃𝗼𝘀 𝗲𝗺** `{path}` :\n\n"
+            msg = f"📁 **Files and Folders in** `{path}`:\n\n"
             lists = os.listdir(path)
         else:
-            msg = "📂 **𝗣𝗮𝘀𝘁𝗮𝘀 𝗲 𝗔𝗿𝗾𝘂𝗶𝘃𝗼𝘀 𝗻𝗼 𝗗𝗶𝗿𝗲𝘁𝗼́𝗿𝗶𝗼 𝗔𝘁𝘂𝗮𝗹:**\n\n"
+            msg = "📂 **Files and Folders in Current Directory:**\n\n"
             lists = os.listdir(path)
         files = ""
         folders = ""
@@ -70,10 +81,10 @@ async def lst(_, message: Message):
         if files or folders:
             msg = msg + folders + files
         else:
-            msg += "__𝗖𝗮𝗺𝗶𝗻𝗵𝗼 𝘃𝗮𝘇𝗶𝗼__"
+            msg += "__Empty path__"
     else:
         size = os.stat(path).st_size
-        msg = "📄 **𝗗𝗲𝘁𝗮𝗹𝗵𝗲𝘀 𝗱𝗼 𝗮𝗿𝗾𝘂𝗶𝘃𝗼 𝗲𝘀𝗽𝗲𝗰𝗶𝗳𝗶𝗰𝗮𝗱𝗼:**\n\n"
+        msg = "📄 **Details of the specified file:**\n\n"
         if path.endswith((".mp3", ".flac", ".wav", ".m4a")):
             mode = "🎵 "
         elif path.endswith((".opus")):
@@ -97,11 +108,11 @@ async def lst(_, message: Message):
         time.ctime(os.path.getctime(path))
         time2 = time.ctime(os.path.getmtime(path))
         time3 = time.ctime(os.path.getatime(path))
-        msg += f"**📍 𝗟𝗼𝗰𝗮𝗹𝗶𝘇𝗮𝗰̧𝗮̃𝗼:** `{path}`\n"
-        msg += f"**🔖 𝗜́𝗰𝗼𝗻𝗲:** `{mode}`\n"
-        msg += f"**📏 𝗧𝗮𝗺𝗮𝗻𝗵𝗼:** `{humanbytes(size)}`\n"
-        msg += f"**🕒 𝗨́𝗹𝘁𝗶𝗺𝗮 𝗠𝗼𝗱𝗶𝗳𝗶𝗰𝗮𝗰̧𝗮̃𝗼:** `{time2}`\n"
-        msg += f"**📅 𝗨́𝗹𝘁𝗶𝗺𝗼 𝗔𝗰𝗲𝘀𝘀𝗼:** `{time3}`"
+        msg += f"**📍 Location:** `{path}`\n"
+        msg += f"**🔖 Icon:** `{mode}`\n"
+        msg += f"**📏 Size:** `{humanbytes(size)}`\n"
+        msg += f"**🕒 Last Modified:** `{time2}`\n"
+        msg += f"**📅 Last Accessed:** `{time3}`"
 
     if len(msg) > MAX_MESSAGE_SIZE_LIMIT:
         with io.BytesIO(str.encode(msg)) as out_file:
@@ -121,13 +132,13 @@ async def lst(_, message: Message):
 async def rm_file(_, message: Message):
     if len(message.command) < 2:
         return await eor(message,
-                         text="🚫 **𝗣𝗼𝗿 𝗳𝗮𝘃𝗼𝗿, 𝗳𝗼𝗿𝗻𝗲𝗰̧𝗮 𝗼 𝗻𝗼𝗺𝗲 𝗱𝗲 𝘂𝗺 𝗮𝗿𝗾𝘂𝗶𝘃𝗼 𝗽𝗮𝗿𝗮 𝗱𝗲𝗹𝗲𝘁𝗮𝗿.**")
+                         text="🚫 **Please provide the name of a file to delete.**")
     file = message.text.split(" ", 1)[1]
     if exists(file):
         os.remove(file)
-        await eor(message, text=f"🗑️ **{file} 𝗳𝗼𝗶 𝗱𝗲𝗹𝗲𝘁𝗮𝗱𝗼.**")
+        await eor(message, text=f"🗑️ **{file} has been deleted Successfully ✅.**")
     else:
-        await eor(message, text=f"❌ **{file} 𝗻𝗮̃𝗼 𝗲𝘅𝗶𝘀𝘁𝗲!**")
+        await eor(message, text=f"❌ **{file} does not exist!**")
 
 
 async def eor(msg: Message, **kwargs: dict):
