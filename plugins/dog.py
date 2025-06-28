@@ -12,8 +12,8 @@ from pyrogram.types import (
 
 close_keyboard = InlineKeyboardMarkup(
     [
-        [InlineKeyboardButton(text="🔄 **𝗔𝘁𝘂𝗮𝗹𝗶𝘇𝗮𝗿**", callback_data="refresh_dog")],
-        [InlineKeyboardButton(text="❌ **𝗙𝗲𝗰𝗵𝗮𝗿**", callback_data="close")],
+        [InlineKeyboardButton(text="🔄 **Refresh**", callback_data="refresh_dog")],
+        [InlineKeyboardButton(text="❌ **Close**", callback_data="close")],
     ]
 )
 
@@ -29,7 +29,7 @@ async def dog(_client: Client, message: Message):
         else:
             await message.reply_photo(dog_url, reply_markup=close_keyboard)
     else:
-        await message.reply_text("🐕 **𝗙𝗮𝗹𝗵𝗮 𝗮𝗼 𝗯𝘂𝘀𝗰𝗮𝗿 𝗳𝗼𝘁𝗼 𝗱𝗲 𝗰𝗮𝗰𝗵𝗼𝗿𝗿𝗼!**")
+        await message.reply_text("🐕 **Failed to fetch dog photo!**")
 
 
 @app.on_callback_query(filters.regex("refresh_dog") & ~BANNED_USERS)
@@ -46,5 +46,4 @@ async def refresh_dog(_client: Client, callback_query: CallbackQuery):
                 reply_markup=close_keyboard,
             )
     else:
-        await callback_query.edit_message_text(
-            "🐕 **𝗙𝗮𝗹𝗵𝗮 𝗮𝗼 𝗮𝘁𝘂𝗮𝗹𝗶𝘇𝗮𝗿 𝗳𝗼𝘁𝗼 𝗱𝗲 𝗰𝗮𝗰𝗵𝗼𝗿𝗿𝗼!**")
+        await callback_query.edit_message_text("🐕 **Failed to refresh dog photo!**")
