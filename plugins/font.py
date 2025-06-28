@@ -2549,7 +2549,7 @@ async def style(_client: Client, message: Message):
         pass
 
 
-__MODULE__ = "🎨 𝗙𝗼𝗻𝘁"
+__MODULE__ = "Font"
 __HELP__ = """
-• /font [𝘁𝗲𝘅𝘁𝗼] - **𝗖𝗼𝗻𝘃𝗲𝗿𝘁𝗲 𝘁𝗲𝘅𝘁𝗼 𝗲𝗺 𝗳𝗼𝗿𝗺𝗮𝘁𝗼 𝗲𝘀𝘁𝗶𝗹𝗶𝘇𝗮𝗱𝗼 𝗰𝗼𝗺 𝗳𝗼𝗻𝘁𝗲𝘀 𝘃𝗮𝗿𝗶𝗮𝗱𝗮𝘀.**
+• /font [text] - **Converts Normal Text Into Desired Modern Font Style.**
 """
