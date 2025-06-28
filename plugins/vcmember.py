@@ -14,9 +14,12 @@ async def vc_members(client, message):
         language = await get_lang(message.chat.id)
         _ = get_string(language)
     except:
-        _ = get_string("pt_br")
+        _ = get_string("en")
+
     msg = await message.reply_text(
-        "🚫 𝗗𝗲𝘀𝗰𝘂𝗹𝗽𝗲! 𝗢 𝗯𝗼𝘁 𝗽𝗲𝗿𝗺𝗶𝘁𝗲 𝘂𝗺 𝗻𝘂́𝗺𝗲𝗿𝗼 𝗹𝗶𝗺𝗶𝘁𝗮𝗱𝗼 𝗱𝗲 𝘃𝗶𝗱𝗲𝗼𝗰𝗵𝗮𝗺𝗮𝗱𝗮𝘀 𝗱𝗲𝘃𝗶𝗱𝗼 𝗮 𝗽𝗿𝗼𝗯𝗹𝗲𝗺𝗮𝘀 𝗱𝗲 𝘀𝗼𝗯𝗿𝗲𝗰𝗮𝗿𝗴𝗮 𝗱𝗮 𝗖𝗣𝗨. 𝗠𝘂𝗶𝘁𝗼𝘀 𝗼𝘂𝘁𝗿𝗼𝘀 𝗰𝗵𝗮𝘁𝘀 𝗲𝘀𝘁𝗮̃𝗼 𝘂𝘀𝗮𝗻𝗱𝗼 𝘃𝗶𝗱𝗲𝗼𝗰𝗵𝗮𝗺𝗮𝗱𝗮 𝗻𝗼 𝗺𝗼𝗺𝗲𝗻𝘁𝗼. 𝗧𝗲𝗻𝘁𝗲 𝗺𝘂𝗱𝗮𝗿 𝗽𝗮𝗿𝗮 𝗮́𝘂𝗱𝗶𝗼 𝗼𝘂 𝘁𝗲𝗻𝘁𝗲 𝗻𝗼𝘃𝗮𝗺𝗲𝗻𝘁𝗲 𝗺𝗮𝗶𝘀 𝘁𝗮𝗿𝗱𝗲. 🎙️")
+        "🚫 Sorry! The bot allows a limited number of video calls due to CPU overload. "
+        "Too many chats are using video at the moment. Try switching to audio or try again later. 🎙️"
+    )
 
     userbot = await get_assistant(message.chat.id)
     TEXT = ""
@@ -40,15 +43,42 @@ async def vc_members(client, message):
                 except:
                     title = m.chat.first_name
 
-            TEXT += f"𝗨𝘀𝘂𝗮́𝗿𝗶𝗼: {title}\n𝗜𝗗: {chat_id}\n👤 𝗨𝘀𝗲𝗿𝗻𝗮𝗺𝗲: {username}\n📹 𝗩𝗶́𝗱𝗲𝗼: {is_video_enabled}\n🖥️ 𝗖𝗼𝗺𝗽𝗮𝗿𝘁𝗶𝗹𝗵𝗮𝗻𝗱𝗼 𝗲𝗿𝗮𝗻: {is_screen_sharing_enabled}\n🙋 𝗠𝗮̃𝗼 𝗹𝗲𝘃𝗮𝗻𝘁𝗮𝗱𝗮: {is_hand_raised}\n🔈 𝗠𝘂𝗱𝗼: {is_muted}\n💬 𝗙𝗮𝗹𝗮𝗻𝗱𝗼: {is_speaking}\n🚶 𝗦𝗮𝗶𝘂: {is_left}\n\n"
+            TEXT += (
+                f"👤 User: {title}\n"
+                f"🆔 ID: {chat_id}\n"
+                f"🔗 Username: {username}\n"
+                f"📹 Video: {is_video_enabled}\n"
+                f"🖥️ Screen Sharing: {is_screen_sharing_enabled}\n"
+                f"🙋 Hand Raised: {is_hand_raised}\n"
+                f"🔈 Muted: {is_muted}\n"
+                f"💬 Speaking: {is_speaking}\n"
+                f"🚶 Left: {is_left}\n\n"
+            )
 
         if len(TEXT) < 4000:
-            await msg.edit(TEXT or "⚠️ 𝗡𝗲𝗻𝗵𝘂𝗺 𝗺𝗲𝗺𝗯𝗿𝗼 𝗲𝗻𝗰𝗼𝗻𝘁𝗿𝗮𝗱𝗼.")
+            await msg.edit(TEXT or "⚠️ No members found in the voice chat.")
         else:
             link = await winxbin(TEXT)
             await msg.edit(
-                f"📄 𝗟𝗶𝗻𝗸 𝗽𝗮𝗿𝗮 𝗹𝗶𝘀𝘁𝗮: {link}",
+                f"📄 Voice chat member list is too long. View here: {link}",
                 disable_web_page_preview=True,
             )
-    except ValueError as e:
-        await msg.edit("❗ 𝗘𝗿𝗿𝗼𝗿𝗲: 𝗡𝗮̃𝗼 𝗳𝗼𝗶 𝗽𝗼𝘀𝘀𝗶́𝘃𝗲𝗹 𝗰𝗮𝗿𝗿𝗲𝗴𝗮𝗿 𝗮 𝗹𝗶𝘀𝘁𝗮.")
+    except ValueError:
+        await msg.edit("❗ Error: Failed to fetch the voice chat members.")
+
+
+__MODULE__ = "VC-Users"
+__HELP__ = """
+**🎙️ Voice Chat User Commands:**
+
+Use these commands to list all members in the current voice chat session:
+
+- `/vcusers` or `/vcmembers` — View all users currently connected to the voice chat.
+- Shows information like: video on/off, muted, hand raised, speaking status, etc.
+
+**Example:**
+- Just run the command while a voice chat is active in the group.
+
+⚠️ *Bot needs to be in the call and have necessary permissions to view participants.*
+"""
+    
