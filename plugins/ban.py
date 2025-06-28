@@ -23,8 +23,8 @@ from WinxMusic.utils.functions import (
     extract_user_and_reason,
     time_converter,
 )
-from utils.error import capture_err
-from utils.permissions import adminsOnly, member_permissions
+from WinxMusic.utils.error import capture_err
+from WinxMusic.utils.permissions import adminsOnly, member_permissions
 
 warnsdb = mongodb.warns
 
