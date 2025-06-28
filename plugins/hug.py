@@ -10,26 +10,28 @@ async def hug(_, message: Message):
         if message.reply_to_message:
             await message.reply_video(
                 nekos.img("hug"),
-                caption=f"{message.from_user.mention} abraçou {message.reply_to_message.from_user.mention} 🤗",
+                caption=f"{message.from_user.mention} gave a warm hug to {message.reply_to_message.from_user.mention} 🤗",
             )
         else:
-            await message.reply_video(nekos.img("hug"), caption="Um abraço para você! 🤗")
+            await message.reply_video(
+                nekos.img("hug"), caption="Here's a warm hug just for you! 🤗"
+            )
     except Exception as e:
-        await message.reply_text(f"Erro: {e}")
+        await message.reply_text(f"Error: {e}")
 
 
-__MODULE__ = "🫂𝗔𝗯𝗿𝗮𝗰̧𝗼"
+__MODULE__ = "🫂 Hug"
 __HELP__ = """
-**𝗖𝗼𝗺𝗮𝗻𝗱𝗼 𝗱𝗲 𝗔𝗯𝗿𝗮𝗰̧𝗼:**
+**🤗 Hug Command:**
 
-- `/hug`: Envia uma animação de abraço. Se usado como resposta a uma mensagem, menciona quem enviou e quem recebeu o abraço.
+• `/hug`: Sends a hugging animation. If used as a reply, it will tag the sender and the recipient of the hug.
 
-**𝗜𝗻𝘀𝘁𝗿𝘂𝗰̧𝗼̃𝗲𝘀:**
+**Usage Instructions:**
 
-- Use `/hug` para enviar um abraço animado.
-- Responda a uma mensagem com `/hug` para enviar um abraço mencionando o remetente e o destinatário.
+• Use `/hug` to send a hug animation.
+• Reply to a user's message with `/hug` to hug them directly.
 
-**𝗜𝗺𝗽𝗼𝗿𝘁𝗮𝗻𝘁𝗲:**
+**Note:**
 
-- Verifique se as configurações do seu chat permitem que o bot envie vídeos para funcionamento completo.
+• Make sure your chat settings allow the bot to send videos for this to work properly.
 """
