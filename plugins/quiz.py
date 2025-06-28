@@ -16,7 +16,7 @@ async def quiz(client, message):
 
     if user_id in last_command_time and current_time - last_command_time[user_id] < 5:
         await message.reply_text(
-            "⏳ 𝗔𝗴𝘂𝗮𝗿𝗱𝗲 𝟱 𝘀𝗲𝗴𝘂𝗻𝗱𝗼𝘀 𝗮𝗻𝘁𝗲𝘀 𝗱𝗲 𝘂𝘀𝗮𝗿 𝗲𝘀𝘁𝗲 𝗰𝗼𝗺𝗮𝗻𝗱𝗼 𝗻𝗼𝘃𝗮𝗺𝗲𝗻𝘁𝗲. 🙏"
+            "⏳ Please wait 5 seconds before using this command again. 🙏"
         )
         return
 
@@ -47,5 +47,6 @@ async def quiz(client, message):
     )
 
 
-__MODULE__ = "❓𝗤𝘂𝗶𝘇"
-__HELP__ = " /quiz - 𝗽𝗲𝗿𝗴𝘂𝗻𝘁𝗮 𝗮𝗹𝗲𝗮𝘁𝗼́𝗿𝗶𝗮 𝗾𝘂𝗶𝘇 🎉"
+__MODULE__ = "Quiz"
+__HELP__ = " /quiz - get a random quiz question 🎉"
+    
