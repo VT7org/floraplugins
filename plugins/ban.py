@@ -14,7 +14,7 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-from config import BANNED_USERS, SUDOERS
+from config import *
 from WinxMusic import app
 from WinxMusic.core.mongo import mongodb
 from WinxMusic.utils.database import save_filter
@@ -24,7 +24,7 @@ from WinxMusic.utils.functions import (
     time_converter,
 )
 from utils.error import capture_err
-from utils.permissions import admins_only, member_permissions
+from utils.permissions import adminsOnly, member_permissions
 
 warnsdb = mongodb.warns
 
@@ -124,7 +124,7 @@ async def remove_warns(chat_id: int, name: str) -> bool:
     return False
 
 @app.on_message(filters.command(["kick", "skick"]) & ~filters.private & ~BANNED_USERS)
-@admins_only("can_restrict_members")
+@adminsOnly("can_restrict_members")
 async def kick_func(client: Client, message: Message):
     """Kick a user from the chat, optionally deleting their messages."""
     try:
@@ -159,7 +159,7 @@ async def kick_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error:** {str(e)}")
 
 @app.on_message(filters.command(["ban", "sban", "tban"]) & ~filters.private & ~BANNED_USERS)
-@admins_only("can_restrict_members")
+@adminsOnly("can_restrict_members")
 async def ban_func(client: Client, message: Message):
     """Ban a user from the chat, with options for silent or temporary bans."""
     try:
@@ -213,7 +213,7 @@ async def ban_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error:** {str(e)}")
 
 @app.on_message(filters.command("unban") & ~filters.private & ~BANNED_USERS)
-@admins_only("can_restrict_members")
+@adminsOnly("can_restrict_members")
 async def unban_func(client: Client, message: Message):
     """Unban a user from the chat."""
     try:
@@ -230,7 +230,7 @@ async def unban_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error:** {str(e)}")
 
 @app.on_message(filters.command(["promote", "fullpromote"]) & ~filters.private & ~BANNED_USERS)
-@admins_only("can_promote_members")
+@adminsOnly("can_promote_members")
 async def promote_func(client: Client, message: Message):
     """Promote a member to admin, optionally with full privileges."""
     try:
@@ -262,7 +262,7 @@ async def promote_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error:** {str(e)}")
 
 @app.on_message(filters.command("demote") & ~filters.private & ~BANNED_USERS)
-@admins_only("can_promote_members")
+@adminsOnly("can_promote_members")
 async def demote_func(client: Client, message: Message):
     """Demote an admin to a regular member."""
     try:
@@ -297,7 +297,7 @@ async def demote_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error While Demoting:** {str(e)}")
 
 @app.on_message(filters.command("purge") & ~filters.private & ~BANNED_USERS)
-@admins_only("can_delete_messages")
+@adminsOnly("can_delete_messages")
 async def purge_func(client: Client, message: Message):
     """Delete messages from the replied message to the current message."""
     try:
@@ -323,7 +323,7 @@ async def purge_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error:** {str(e)}")
 
 @app.on_message(filters.command("del") & ~filters.private & ~BANNED_USERS)
-@admins_only("can_delete_messages")
+@adminsOnly("can_delete_messages")
 async def delete_func(client: Client, message: Message):
     """Delete the replied message."""
     try:
@@ -335,7 +335,7 @@ async def delete_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error:** {str(e)}")
 
 @app.on_message(filters.command(["pin", "unpin"]) & ~filters.private & ~BANNED_USERS)
-@admins_only("can_pin_messages")
+@adminsOnly("can_pin_messages")
 async def pin_func(client: Client, message: Message):
     """Pin or unpin a replied message."""
     try:
@@ -356,7 +356,7 @@ async def pin_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error Raised While Pinning the message:** {str(e)}")
 
 @app.on_message(filters.command("unpinall") & ~filters.private & ~BANNED_USERS)
-@admins_only("can_pin_messages")
+@adminsOnly("can_pin_messages")
 async def unpin_all_func(client: Client, message: Message):
     """Prompt to unpin all messages in the chat."""
     try:
@@ -385,7 +385,7 @@ async def unpin_callback(client: Client, query: CallbackQuery):
         await query.message.edit_text(f"⚠️ **Error In Unpin Function or Insufficient Rights:** {str(e)}")
 
 @app.on_message(filters.command(["mute", "tmute"]) & ~filters.private & ~BANNED_USERS)
-@admins_only("can_restrict_members")
+@adminsOnly("can_restrict_members")
 async def mute_func(client: Client, message: Message):
     """Mute a user, optionally for a specific time."""
     try:
@@ -437,7 +437,7 @@ async def mute_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error:** {str(e)}")
 
 @app.on_message(filters.command("unmute") & ~filters.private & ~BANNED_USERS)
-@admins_only("can_restrict_members")
+@adminsOnly("can_restrict_members")
 async def unmute_func(client: Client, message: Message):
     """Unmute a user in the chat."""
     try:
@@ -452,7 +452,7 @@ async def unmute_func(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error in Unmute Function:** {str(e)}")
 
 @app.on_message(filters.command(["warn", "swarn"]) & ~filters.private & ~BANNED_USERS)
-@admins_only("can_restrict_members")
+@adminsOnly("can_restrict_members")
 async def warn_user(client: Client, message: Message):
     """Warn a user, banning them after 3 warnings."""
     try:
@@ -529,7 +529,7 @@ async def remove_warning(client: Client, query: CallbackQuery):
         await query.answer(f"⚠️ **Error:** {str(e)}", show_alert=True)
 
 @app.on_message(filters.command("rmwarn") & ~filters.private & ~BANNED_USERS)
-@admins_only("can_restrict_members")
+@adminsOnly("can_restrict_members")
 async def remove_warnings(client: Client, message: Message):
     """Remove all warnings for a user."""
     try:
@@ -572,7 +572,7 @@ async def check_warns(client: Client, message: Message):
         await message.reply_text(f"⚠️ **Error While Checking Warnings:** {str(e)}")
 
 @app.on_message(filters.command("link") & ~filters.private & ~BANNED_USERS)
-@admins_only("can_invite_users")
+@adminsOnly("can_invite_users")
 async def invite_func(client: Client, message: Message):
     """Share the group's invite link."""
     try:
