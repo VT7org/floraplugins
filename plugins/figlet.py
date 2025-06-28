@@ -15,8 +15,8 @@ def figle(text):
     keyboard = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(text="🔄 **𝗧𝗿𝗼𝗰𝗮𝗿**", callback_data="figlet"),
-                InlineKeyboardButton(text="❌ **𝗙𝗲𝗰𝗵𝗮𝗿**", callback_data="close_reply"),
+                InlineKeyboardButton(text="🔄 **Change**", callback_data="figlet"),
+                InlineKeyboardButton(text="❌ **Close**", callback_data="close_reply"),
             ]
         ]
     )
@@ -29,10 +29,10 @@ async def echo(bot, message):
     try:
         text = message.text.split(" ", 1)[1]
     except IndexError:
-        return await message.reply_text("💡 **𝗘𝘅𝗲𝗺𝗽𝗹𝗼 𝗱𝗲 𝘂𝘀𝗼:**\n\n`/figlet OpenAI`")
+        return await message.reply_text("💡 **Usage example:**\n\n`/figlet OpenAI`")
     kul_text, keyboard = figle(text)
     await message.reply_text(
-        f"🎨 **𝗔𝗾𝘂𝗶 𝗲𝘀𝘁𝗮́ 𝘀𝗲𝘂 𝗙𝗶𝗴𝗹𝗲𝘁:**\n<pre>{kul_text}</pre>",
+        f"🎨 **Here is your Figlet:**\n<pre>{kul_text}</pre>",
         quote=True,
         reply_markup=keyboard,
     )
@@ -43,18 +43,17 @@ async def figlet_handler(Client, query: CallbackQuery):
     try:
         kul_text, keyboard = figle(text)
         await query.message.edit_text(
-            f"🎨 **𝗔𝗾𝘂𝗶 𝗲𝘀𝘁𝗮́ 𝘀𝗲𝘂 𝗙𝗶𝗴𝗹𝗲𝘁:**\n<pre>{kul_text}</pre>", reply_markup=keyboard
+            f"🎨 **Here is your Figlet:**\n<pre>{kul_text}</pre>", reply_markup=keyboard
         )
     except FloodWait as e:
         await asyncio.sleep(e.value)
-
     except Exception as e:
-        return await query.answer(e, show_alert=True)
+        return await query.answer(str(e), show_alert=True)
 
 
-__MODULE__ = "🎨 𝗙𝗶𝗴𝗹𝗲𝘁"
+__MODULE__ = "🎨 Figlet"
 __HELP__ = """
-**𝗙𝗶𝗴𝗹𝗲𝘁**
+**Figlet**
 
-• /figlet <texto> - **𝗖𝗿𝗶𝗮 𝘂𝗺 𝗙𝗶𝗴𝗹𝗲𝘁 𝗮 𝗽𝗮𝗿𝘁𝗶𝗿 𝗱𝗼 𝘁𝗲𝘅𝘁𝗼 𝗳𝗼𝗿𝗻𝗲𝗰𝗶𝗱𝗼.**
+• /figlet <text> - **Create a Figlet from the provided text.**
 """
