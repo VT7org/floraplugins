@@ -20,7 +20,7 @@ async def gemini_handler(_client: Client, message: Message):
         if len(message.command) > 1:
             user_input = " ".join(message.command[1:])
         else:
-            await message.reply_text("𝗘𝘅𝗲𝗺𝗽𝗹𝗼 :- `/gemini quem é o senhor ram`")
+            await message.reply_text("Example: `/gemini who is Lord Ram`")
             return
 
     try:
@@ -30,6 +30,7 @@ async def gemini_handler(_client: Client, message: Message):
         if x:
             await message.reply_text(x, quote=True)
         else:
-            await message.reply_text("𝗗𝗲𝘀𝗰𝘂𝗹𝗽𝗲! 𝗧𝗲𝗻𝘁𝗲 𝗻𝗼𝘃𝗮𝗺𝗲𝗻𝘁𝗲.")
+            await message.reply_text("Sorry! Please try again.")
     except requests.exceptions.RequestException as e:
-        await message.reply_text("𝗙𝗮𝗹𝗵𝗮 𝗮𝗼 𝗽𝗿𝗼𝗰𝗲𝘀𝘀𝗮𝗿 𝗮 𝗿𝗲𝗾𝘂𝗶𝘀𝗶𝗰̧𝗮̃𝗼.")
+        await message.reply_text("Failed to process the request From Gemini.")
+        
